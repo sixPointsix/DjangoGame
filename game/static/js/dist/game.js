@@ -546,8 +546,8 @@ class Player extends AcGameObject{
 
     update_move(){ //只负责更新移动
         if(this.spent_time > 4 && this.character === "robot" && Math.random() < 1 / 100){
-            let player = this.playground.players[0];
-            //let player = this.playground.players[Math.floor(Math.random() * this.playground.players.length)];
+            //let player = this.playground.players[0];
+            let player = this.playground.players[Math.floor(Math.random() * this.playground.players.length)];
             let tx = player.x, ty = player.y;
             this.shoot_fireball(tx, ty);
         }
