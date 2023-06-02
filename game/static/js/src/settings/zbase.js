@@ -1,6 +1,7 @@
 class Settings{
     constructor(root){
         this.root = root;
+        // platform可以把ACAPP忽略，只在web端运行
         this.platform = "WEB";
         if(this.root.AcWingOS) this.platform = "ACAPP";
         this.username = "";
@@ -118,6 +119,7 @@ class Settings{
         this.add_listening_events_login();
         this.add_listening_events_register();
 
+        //第三方登录
         this.$acwing_login.click(function(){
             outer.acwing_login();
         });
@@ -143,6 +145,7 @@ class Settings{
         })
     }
     
+    //acwing第三方授权码登录
     acwing_login(){
         $.ajax({
             url: "https://app2094.acapp.acwing.com.cn/settings/acwing/web/apply_code/",
@@ -230,6 +233,7 @@ class Settings{
         this.$register.show();
     }
 
+    //在acwing端作为应用的登录，可以忽略
     acapp_login(appid, redirect_uri, scope, state){
         let outer = this;
         this.root.AcWingOS.api.oauth2.authorize(appid, redirect_uri, scope, state, function(resp){
@@ -242,6 +246,7 @@ class Settings{
         });
     }
 
+    //同上
     getinfo_acapp(){
         let outer = this;
 
@@ -255,6 +260,7 @@ class Settings{
             }
         });
     }
+
 
     getinfo_web(){
         let outer = this;

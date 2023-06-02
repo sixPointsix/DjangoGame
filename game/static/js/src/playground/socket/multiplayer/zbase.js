@@ -1,6 +1,7 @@
 class MultiPlayerSocket{
     constructor(playground){
         this.playground = playground;
+        //连接到定义好的websocket服务器
         this.ws = new WebSocket("wss://app2094.acapp.acwing.com.cn/wss/multiplayer/");
 
         this.start();
@@ -13,9 +14,11 @@ class MultiPlayerSocket{
     receive(){
         let outer = this;
 
+        //负责接收websocket服务器的消息，json格式
+        //复制状态机模型，初始状态一致，效率高!!!
         this.ws.onmessage = function(e) {
             let data = JSON.parse(e.data);
-            let uuid = data.uuid;
+            let uuid = data.uuid; //通信的基准是uuid!!
             if(uuid == outer.uuid) return false; //是自己就跳过
 
             let event = data.event;

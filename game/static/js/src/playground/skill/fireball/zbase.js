@@ -40,6 +40,7 @@ class FireBall extends AcGameObject{
         this.move_length -= moved;
     }
 
+    // 循环player列表检测是否当前火球与对方有碰撞
     update_attack(){
         for(let i = 0; i < this.playground.players.length; i ++ ){
             let player = this.playground.players[i];
@@ -57,6 +58,7 @@ class FireBall extends AcGameObject{
         return false;
     }
 
+    //有碰撞就调用被攻击player的is_attacked()方法
     attacked(player){
         let angle = Math.atan2(player.y - this.y, player.x - this.x);
         player.is_attacked(angle, this.damage);

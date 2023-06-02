@@ -65,11 +65,13 @@ class Player extends AcGameObject{
 
 
         this.playground.game_map.$canvas.mousedown(function(e){
+            // 人不满，无响应
             if(outer.playground.state !== "fighting")
                 return true;
 
             const rect = outer.ctx.canvas.getBoundingClientRect();
             if(e.which === 3){
+                // 鼠标右键，移动
                 let tx = (e.clientX - rect.left) / outer.playground.scale;
                 let ty = (e.clientY - rect.top) / outer.playground.scale;
                 outer.move_to(tx, ty);
@@ -78,6 +80,7 @@ class Player extends AcGameObject{
                     outer.playground.mps.send_move_to(tx, ty);
                 }
             }else if(e.which === 1){
+                // 鼠标左键，如果刚才有点击技能键，则按照两点连线方向释放技能
                 let tx = (e.clientX - rect.left) / outer.playground.scale;
                 let ty = (e.clientY - rect.top) / outer.playground.scale;
                 if(outer.cur_skill === "fireball"){
@@ -102,6 +105,7 @@ class Player extends AcGameObject{
             }
         });
 
+        // 监听键盘事件，选择是技能或者聊天相关
         this.playground.game_map.$canvas.keydown(function(e){
             if(e.which === 13) { //enter
                 if(outer.playground.mode === "multi mode"){
@@ -170,6 +174,7 @@ class Player extends AcGameObject{
         this.move_length = 0;
     }
 
+    // 被攻击，生成粒子散落特效，同时判定是否死亡，有击退效果
     is_attacked(angle, damage){
         for (let i = 0; i < 20 + Math.floor(Math.random() * 10); i ++ ){
             let x = this.x, y = this.y;
@@ -217,10 +222,10 @@ class Player extends AcGameObject{
     update() {
         this.spent_time += this.timedelta / 1000;
 
-        this.update_win();
-        this.update_move();
+        this.update_win(); //每帧都判定一下是否胜利
+        this.update_move(); //刷新位置
         if(this.character === "me" && this.playground.state === "fighting"){
-            this.update_coldtime();
+            this.update_coldtime(); //刷新冷却条特效
         }
         this.render();
     }
@@ -240,7 +245,8 @@ class Player extends AcGameObject{
         this.blink_coldtime = Math.max(this.blink_coldtime, 0);
     }
 
-    update_move(){ //只负责更新移动
+    update_move(){ //只负责更新移动,
+        // ai平均每100帧发射火球一次
         if(this.spent_time > 4 && this.character === "robot" && Math.random() < 1 / 100){
             //let player = this.playground.players[0];
             let player = this.playground.players[Math.floor(Math.random() * this.playground.players.length)];
