@@ -13,6 +13,10 @@ from game.models.player.player import Player
 from channels.db import database_sync_to_async
 
 
+# 联机主要是通过channel_layer.group_send()实现的
+# 由于所有玩家都起始位置都是屏幕中心，所以采用复制状态机实现的玩家同步
+# 只记录全局的变化，而不是把全局所有对象全复制一遍
+
 class MultiPlayer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
@@ -24,6 +28,7 @@ class MultiPlayer(AsyncWebsocketConsumer):
 
 #-------------------------------------------------------------------------------------------
 
+    # 创建玩家并加入匹配系统中
     async def create_player(self, data):
         self.room_name = None
         self.uuid = data['uuid']
@@ -38,6 +43,7 @@ class MultiPlayer(AsyncWebsocketConsumer):
         # Create a client to use the protocol encoder
         client = Match.Client(protocol)
 
+        # 异步数据库查询操作
         def db_get_player():
             return Player.objects.get(user__username=data['username'])
 
@@ -157,7 +163,7 @@ class MultiPlayer(AsyncWebsocketConsumer):
         )
 
 #----------------------------------------------------------------------------------------
-
+    # send()实现向前端回传
     async def group_send_event(self, data):
         if not self.room_name:
             keys = cache.keys('*%s*' % (self.uuid))
@@ -166,7 +172,7 @@ class MultiPlayer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(data))
 
 #-----------------------------------------------------------------------------------------
-    #接收前端请求
+    #接收前端请求，通过group_send实现传递给组内所有连接
     async def receive(self, text_data):
         data = json.loads(text_data)
         event = data['event']

@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from game.models.player.player import Player
 
+# 处理第三方平台的请求
 def getinfo_acapp(request):
     player = Player.objects.all()[0]
     return JsonResponse({
@@ -9,6 +10,7 @@ def getinfo_acapp(request):
         'photo' : player.photo,
     })
 
+# web平台的请求
 def getinfo_web(request):
     user = request.user
     if not user.is_authenticated:

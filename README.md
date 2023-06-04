@@ -1,4 +1,4 @@
-### https://app2094.acapp.acwing.com.cn/
+### https://app2095.acapp.acwing.com.cn/
 
 系统设置在: ./acapp/settings 
 功能实现在: ./game
@@ -20,12 +20,12 @@ menu：登陆成功后的界面
 playground：游戏界面 
 
 ### 1.menu：
-menu/zbase.js：登陆成功后的菜单，三个button分别是单人模式，多人模式，退出(退出至登陆界面)。button会调用playground.show() 
+menu/zbase.js：登陆成功后的菜单，三个button分别是单人模式，多人模式，退出(退出至登陆界面)。button会调用playground.show(mode)至游戏界面 
 
 ### 2.playground:
-playground/zbase.js：Playground类，是游戏界面的主类，主要有两个关键的方法show(), hide()负责打开和隐藏playground界面。show(mode)根据不同的模式（单人/多人）选择创建ws连接还是直接加入ai。 
+playground/zbase.js：Playground类，是游戏界面的主类，主要有两个关键的方法show(), hide()分别负责打开和隐藏playground界面。show(mode)根据不同的模式（单人/多人）选择创建ws连接还是直接加入robot玩家。 
 
-playground/ac_game_object/zbase.js：定义了一个AcGameObject的基类，有uuid，当到一个全局的AC_GAME_OBJECTS数组中。仿照unity有start(), update(), late_update(), destroy()等基本方法，是游戏中所有对象的基类。还定义了一个AC_GAME_ANIMATION函数，用于控制游戏的帧动画。通过递归调用js的requestAnimationFrame()方法实现的。 
+playground/ac_game_object/zbase.js：定义了一个AcGameObject的基类，有uuid作为对象的唯一标识，作为对象的全局唯一标识。放入一个全局的AC_GAME_OBJECTS数组中。仿照unity有start(), update(), late_update(), destroy()等基本方法，是游戏中所有对象的基类。还定义了一个AC_GAME_ANIMATION函数，用于控制游戏的帧动画。通过递归调用js的requestAnimationFrame()方法实现的。 
 
 playground/game_map/zbase.js：定义了游戏地图，继承自AcGameObject，创建一个js的canvas对象，获取其2D绘图上下文；另加了resize()用于浏览器窗口更改时的适配和render()用于地图渲染. 
 
@@ -80,15 +80,22 @@ playground/skill/fireball/zbase.js：有一些基本的火球参数；该类的�
 
 playground/particle/zbase.js：火球技能击中敌人时的特效粒子。发生碰撞时会随机向不同方向生成随机多的粒子，速度较快，分散距离小，会较快消失。 
 
-playground/notice_board/zbase.js：游戏界面上方的显示板，多人模式下显示其就绪人数，人满了就显示"fighting!" 
+playground/notice_board/zbase.js：游戏界面上方的显示板，多人模式下显示就绪人数，人满了(3人)就显示"fighting!" 
 
 playground/chat_field/zbase.js：聊天区。不再是AcGameObject的子类了。监听键盘事件，enter会获取输入框中的信息并输入，esc会隐藏聊天区域。发信息或收到信息会显示历史记录一段时间，之后自动隐藏。 
 
 playground/score_baord/zbase.js：得分板，在player.update_win()检测到players只剩一个或player.destroy()时调用其win/lose方法，会展示相应的图像，然后在点击屏幕回到主菜单。 
 
 playground/socket/multiplayer/zbase.js: 
-    http是一种请求-响应的通信协议，只有客户端请求才有服务端的响应，这对于需要多端同步的联机游戏显然是不可取的，http可以通过长轮询的方式实现类似服务器主动发送信息的形式，但是效率不高且负载高，所以程序引入了双向通信和持久连接的websocket协议。 
+    http是一种请求-响应的通信协议，只有客户端请求才有服务端的响应，这对于需要多端同步的联机游戏显然是不可取的，http可以通过长轮询的方式实现类似服务器主动发送信息的形式，但是效率不高且负载高，所以程序引入了双向通信和持久连接的websocket协议。  
     连接到指定的wss服务器，receive监听wss服务器的消息，以uuid为通信基准。get_player找到指定的对象，send_, receive_函数进行与服务器的通信。 
 
 ### 3.settings:
-settings/zbase.js：这是登录注册的界面，主要是通过ajax用http协议与服务器异步通信。 
+settings/zbase.js：这是登录注册的界面，主要是通过ajax用http协议与服务器异步通信。  
+
+
+## 后端逻辑
+后端主要可以分为三个部分，分别是：  
+（1）登陆注册(加入了第三方验证登录，acwing的，qq需要备案)：game/views/settings/*  
+（2）联机逻辑（对战+聊天室）：game/consumer/multiplayer/*  
+（3）thrift实现的匹配系统：match_system/src/main.py  

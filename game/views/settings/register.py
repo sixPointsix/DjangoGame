@@ -24,8 +24,8 @@ def register(request):
     user = User(username=username)
     user.set_password(password)
     user.save()
-    Player.objects.create(user=user, photo="https://img0.baidu.com/it/u=298933154,3538627549&fm=253&fmt=auto&app=138&f=JPEG?w=400&h=400")
-    login(request, user)
+    Player.objects.create(user=user, photo="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fsafe-img.xhscdn.com%2Fbw1%2F4941ed50-dfe2-4a43-8762-a400fb910622%3FimageView2%2F2%2Fw%2F1080%2Fformat%2Fjpg&refer=http%3A%2F%2Fsafe-img.xhscdn.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1688434332&t=0de895efbb4698b87b4a9d7c5c0f8cc9")
+    login(request, user) #注册成功后直接登录
     return JsonResponse({
         'result': "success"
     })

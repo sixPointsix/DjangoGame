@@ -82,6 +82,7 @@ DATABASES = {
     }
 }
 
+# 指定django的缓存为redis
 CACHES = { 
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',

@@ -6,6 +6,7 @@ from game.models.player.player import Player
 from django.contrib.auth.models import User
 import requests
 
+# 接收第三方平台的授权码并进行处理
 def receive_code(request):
     data = request.GET
     code = data.get('code')
@@ -29,12 +30,13 @@ def receive_code(request):
     access_token = access_token_res['access_token']
     openid = access_token_res['openid']
 
+    # 如果已经存在该用户，直接自动登录
     players = Player.objects.filter(openid=openid)
     if players.exists():
         login(request, players[0].user)
         return redirect("index")
 
-    #通过access_token和openid获取用户信息
+    #通过access_token和openid获取用户信息，并注册到自己的数据库中
     get_userinfo_url = "https://www.acwing.com/third_party/api/meta/identity/getinfo/"
     params = {
         "access_token": access_token,
@@ -52,8 +54,5 @@ def receive_code(request):
     player = Player.objects.create(user=user, photo=photo, openid=openid)
 
     login(request, user)
-
     return redirect("index")
-
-
 
